@@ -2,13 +2,14 @@ import cloudinary from "../lib/cloudinary.js";
 import Message from "../models/message.model.js";
 import User from "../models/user.model.js";
 
+
 export const getUsersForSidebar = async(req, res)=>{
   try {
     const loggedInUserId = req.user._id;
     const filteredUser = await User.find({_id: {$ne: loggedInUserId}}).select("-password");
     res.status(200).json(filteredUser);
   } catch (error) {
-    console.error("Error in UsersForSidebar: ",error.message);
+    console.error("Error in getUsersForSidebar: ",error.message);
     res.status(500).json({error: "Internal server error"});
   }
 };
@@ -21,8 +22,8 @@ export const getMessage = async (req,res)=>{
       $or:[
         {senderId: myId, receiverId: userToChatId},
         {senderId: userToChatId, receiverId: myId}
-      ]
-    })
+      ],
+    });
 
     res.status(200).json(message);
   } catch (error) {
@@ -46,7 +47,7 @@ export const sendMessage = async (req, res)=>{
       senderId,
       receiverId,
       text,
-      img: imageUrl,
+      image: imageUrl,
     });
     await newMessage.save();
 
